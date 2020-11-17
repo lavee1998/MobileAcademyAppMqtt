@@ -1,21 +1,60 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar'
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import {
+  Provider as PaperProvider,
+  Appbar,
+  DefaultTheme,
+  BottomNavigation,
+} from 'react-native-paper'
+import MainMapView from './components/MapView'
+import AddView from './components/AddView'
+import reducer from './reducer'
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: 'darkcyan',
+    accent: 'white',
+  },
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const Map = () => <MainMapView />
+const Add = () => <AddView />
+
+const store = createStore(reducer)
+
+export default App = () => {
+  const _goBack = () => console.log('Went back')
+
+  const [index, setIndex] = React.useState(0)
+  const [routes] = React.useState([
+    { key: 'map', title: 'Map', icon: 'map' },
+    { key: 'add', title: 'Add', icon: 'plus' },
+  ])
+
+  const renderScene = BottomNavigation.SceneMap({
+    add: Add,
+    map: Map,
+  })
+
+  return (
+    <Provider store={store}>
+      <PaperProvider theme={theme}>
+        <Appbar.Header>
+          <Appbar.BackAction onPress={_goBack} />
+          <Appbar.Content title="Mobil Academy" subtitle="helló levi" />
+        </Appbar.Header>
+
+        <BottomNavigation
+          navigationState={{ index, routes }}
+          onIndexChange={setIndex}
+          renderScene={renderScene}
+        />
+      </PaperProvider>
+    </Provider>
+  )
+}
