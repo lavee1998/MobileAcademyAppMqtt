@@ -36,8 +36,6 @@ const AddViewMqtt = ({ markers, addMarker }) => {
 
   const isFirstRender = useRef(true);
 
- 
-
 
   const actionList = [
     { value: 0, label: "Traffipax" },
@@ -80,7 +78,7 @@ const AddViewMqtt = ({ markers, addMarker }) => {
 
   const onWORLD = (messageFromWorld) => {
     let messageJSON = JSON.parse(messageFromWorld);
-    addMarker(messageJSON.type, 9, messageJSON.latitude, messageJSON.longitude);
+    addMarker(messageJSON);
     console.log(
       "type: " +
         messageJSON.type +
@@ -90,8 +88,6 @@ const AddViewMqtt = ({ markers, addMarker }) => {
         messageJSON.longitude
     );
     setMessage(messageFromWorld);
-
-    //setMessage(message);
   };
 
   const mqttSuccessHandler = () => {
@@ -104,12 +100,14 @@ const AddViewMqtt = ({ markers, addMarker }) => {
   const mqttConnectionLostHandler = () => {
     setIsConnected(false);
   };
+
   const onPublish = () => {
     console.log("action: " + action);
     let newMarker = {
       latitude: marker.latitude,
       longitude: marker.longitude,
       type: action,
+      approveCount: 0
     };
     let message = JSON.stringify(newMarker);
     MqttService.publishMessage("WORLD", message);
@@ -220,14 +218,14 @@ const mapStateToProps = (state /*, ownProps*/) => ({
 const mapDispatchToProps = (dispatch) => {
   return {
     // dispatching plain actions
-    addMarker: (type, id, latitude, longitude) =>
+    addMarker: (marker) =>
       dispatch({
         type: "ADD_MARKER",
         payload: {
-          type: type,
-          id: id,
-          latitude: latitude,
-          longitude: longitude,
+          type: marker.type,
+          latitude: marker.latitude,
+          longitude: marker.longitude,
+          approveCount: marker.approveCount
         },
       }),
   };

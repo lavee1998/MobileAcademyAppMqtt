@@ -36,7 +36,7 @@ export default App = () => {
   const [routes] = React.useState([
     { key: 'map', title: 'Map', icon: 'map' },
     { key: 'add', title: 'Add', icon: 'plus' },
-    { key: 'chat', title: 'Chat', icon: 'home' },
+    { key: 'chat', title: 'Chat', icon: 'chat' },
 
   ])
 
