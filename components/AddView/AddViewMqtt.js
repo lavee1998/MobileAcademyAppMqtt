@@ -103,14 +103,26 @@ const AddViewMqtt = ({ markers, addMarker }) => {
 
   const onPublish = () => {
     console.log("action: " + action);
-    let newMarker = {
-      latitude: marker.latitude,
-      longitude: marker.longitude,
-      type: action,
-      approveCount: 0
-    };
-    let message = JSON.stringify(newMarker);
-    MqttService.publishMessage("WORLD", message);
+
+    const url = `https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=${marker.latitude}%2C${marker.longitude}&mode=retrieveAddresses&maxresults=1&gen=9&apiKey=99MVsWZF5b6TLmiXpC8MJlQI_2twZtLiYMluOmZ8zu0`
+    fetch(url)
+      .then(res => res.json())
+      .then((json) => {
+        let newMarker = {
+          address: json.Response.View[0].Result[0].Location.Address.Label,
+          latitude: marker.latitude,
+          longitude: marker.longitude,
+          type: action,
+          approveCount: 0
+        };
+        console.log(newMarker)
+        let message = JSON.stringify(newMarker);
+        MqttService.publishMessage("WORLD", message);
+      })
+      .catch((e) => {
+        console.log('Error in getAddressFromCoordinates', e)
+        return e
+      })
   };
 
   return (
@@ -222,6 +234,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch({
         type: "ADD_MARKER",
         payload: {
+          address: marker.address,
           type: marker.type,
           latitude: marker.latitude,
           longitude: marker.longitude,

@@ -37,6 +37,7 @@ const MainMapView = ({ markers, addMarker, removeMarker }) => {
     removeMarker(event)
 
     let newMarker = {
+      address: event.address,
       latitude: event.latitude,
       longitude: event.longitude,
       type: event.type,
@@ -45,21 +46,7 @@ const MainMapView = ({ markers, addMarker, removeMarker }) => {
 
     let message = JSON.stringify(newMarker);
     MqttService.publishMessage("ApproveWORLD", message);
-  }
-
-  // egyelőre nem használjuk de később jó lenne beletenni és ezt megjeleníteni a listában a latitude helyett
-  const getAddressFromCoordinates = async ( latitude, longitude ) => {
-    const url = `https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=${latitude}%2C${longitude}&mode=retrieveAddresses&maxresults=1&gen=9&apiKey=99MVsWZF5b6TLmiXpC8MJlQI_2twZtLiYMluOmZ8zu0`
-    return fetch(url)
-      .then(res => res.json())
-      .then((json) => {
-          return json.Response.View[0].Result[0].Location.Address.Label
-      })
-      .catch((e) => {
-        console.log('Error in getAddressFromCoordinates', e)
-        return e
-      })
-  }
+  }  
 
   //----------------------------------- MQTT ----------------------------------------
   const mqttConnectionLostHandler = () => {
@@ -102,8 +89,7 @@ const MainMapView = ({ markers, addMarker, removeMarker }) => {
         " count: " +
         messageJSON.approveCount
     );
-    const message_ = messageFromWorld;
-    setMessage(message_);
+    setMessage(messageFromWorld);
   };
 
   return (
@@ -126,9 +112,8 @@ const MainMapView = ({ markers, addMarker, removeMarker }) => {
                 default:
                   iconSource = "equal"
               }
-              
               return (<List.Item key={i}
-                                title={marker.latitude.toString()}
+                                title={marker.address}
                                 description= {`Approved by ${marker.approveCount} people`}
                                 left={props => <List.Icon {...props} icon={iconSource} />}
                                 right={() => <IconButton
@@ -199,6 +184,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch({
         type: "ADD_MARKER",
         payload: {
+          address: marker.address,
           type: marker.type,
           latitude: marker.latitude,
           longitude: marker.longitude,
@@ -210,6 +196,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch({
         type: "REMOVE_MARKER",
         payload: {
+          address: marker.address,
           type: marker.type,
           latitude: marker.latitude,
           longitude: marker.longitude,
