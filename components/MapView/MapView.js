@@ -1,20 +1,14 @@
 import React, { Component, useEffect } from 'react'
-import { View, Text, StyleSheet, Dimensions } from 'react-native'
-import MapView, { AnimatedRegion } from 'react-native-maps'
+import { View, Text, StyleSheet, Dimensions, Image, ScrollView } from 'react-native'
+import MapView, { AnimatedRegion, Marker } from 'react-native-maps'
 import { connect } from 'react-redux'
-import { Image } from 'react-native'
+import { List, IconButton, Colors } from 'react-native-paper'
+import MqttService from "../../src/core/services/MqttService";
 
-const MainMapView = ({ markers}) => {
-  const [currentRegion, setCurrentRegion] = React.useState(null)
-
-  const getCurrentLocation = () => {
-    return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => resolve(position),
-        (e) => reject(e)
-      )
-    })
-  }
+const MainMapView = ({ markers, addMarker, removeMarker }) => {
+  const [isConnected, setIsConnected] = React.useState(false);
+  const [message, setMessage] = React.useState(null);
+  const [currentRegion, setCurrentRegion] = React.useState(null);
 
   useEffect(() => {
     getCurrentLocation().then((position) => {
@@ -27,11 +21,127 @@ const MainMapView = ({ markers}) => {
         })
       }
     })
-    console.log(currentRegion)
+    MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler);
   }, [])
+
+  const getCurrentLocation = () => {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => resolve(position),
+        (e) => reject(e)
+      )
+    })
+  }
+  
+  const approve = (event) => {
+    removeMarker(event)
+
+    let newMarker = {
+      latitude: event.latitude,
+      longitude: event.longitude,
+      type: event.type,
+      approveCount: event.approveCount + 1
+    };
+
+    let message = JSON.stringify(newMarker);
+    MqttService.publishMessage("ApproveWORLD", message);
+  }
+
+  // egyelőre nem használjuk de később jó lenne beletenni és ezt megjeleníteni a listában a latitude helyett
+  const getAddressFromCoordinates = async ( latitude, longitude ) => {
+    const url = `https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=${latitude}%2C${longitude}&mode=retrieveAddresses&maxresults=1&gen=9&apiKey=99MVsWZF5b6TLmiXpC8MJlQI_2twZtLiYMluOmZ8zu0`
+    return fetch(url)
+      .then(res => res.json())
+      .then((json) => {
+          return json.Response.View[0].Result[0].Location.Address.Label
+      })
+      .catch((e) => {
+        console.log('Error in getAddressFromCoordinates', e)
+        return e
+      })
+  }
+
+  //----------------------------------- MQTT ----------------------------------------
+  const mqttConnectionLostHandler = () => {
+    setIsConnected(false);
+  };
+
+  const mqttSuccessHandler = () => {
+    console.info("connected to mqtt");
+    MqttService.subscribe("WORLD", onWORLD);
+    MqttService.subscribe("ApproveWORLD", onApproveWORLD);
+
+    setIsConnected(true);
+  };
+
+  const onWORLD = (messageFromWorld) => {
+    let messageJSON = JSON.parse(messageFromWorld);
+    addMarker(messageJSON);
+    console.log(
+      "type: " +
+        messageJSON.type +
+        " lat: " +
+        messageJSON.latitude +
+        " long: " +
+        messageJSON.longitude
+    );
+    setMessage(messageFromWorld);
+    console.log(message);
+  };
+
+  const onApproveWORLD = (messageFromWorld) => {
+    let messageJSON = JSON.parse(messageFromWorld);
+    addMarker(messageJSON);
+    console.log(
+      "type: " +
+        messageJSON.type +
+        " lat: " +
+        messageJSON.latitude +
+        " long: " +
+        messageJSON.longitude +
+        " count: " +
+        messageJSON.approveCount
+    );
+    const message_ = messageFromWorld;
+    setMessage(message_);
+  };
 
   return (
     <View>
+      <View style={styles.list}>
+        <ScrollView>
+          <List.Section>
+            {markers.map((marker,i) => {
+              var iconSource = ""
+              switch(marker.type) {
+                case 0:
+                  iconSource = "shield-check"
+                  break
+                case 1:
+                  iconSource = "alert"
+                  break
+                case 2:
+                  iconSource = "wrench"
+                  break
+                default:
+                  iconSource = "equal"
+              }
+              
+              return (<List.Item key={i}
+                                title={marker.latitude.toString()}
+                                description= {`Approved by ${marker.approveCount} people`}
+                                left={props => <List.Icon {...props} icon={iconSource} />}
+                                right={() => <IconButton
+                                  icon="check-bold"
+                                  color= {Colors.greenA400}
+                                  size={20}
+                                  onPress={() => approve(marker)}
+                                />}
+                      />)
+            })}
+          </List.Section>
+        </ScrollView>
+      </View>
       <MapView
         style={styles.map}
         loadingEnabled={true}
@@ -53,7 +163,8 @@ const MainMapView = ({ markers}) => {
             default: markerSource = require('../../images/tc_logo.png')
           }
           return (
-            <MapView.Marker key={i} coordinate={marker}>
+            <MapView.Marker key={i}
+                            coordinate={marker}>
               <Image
                 source={markerSource}
                 style={{ height: 50, width: 55 }}
@@ -66,15 +177,47 @@ const MainMapView = ({ markers}) => {
   )
 }
 
+
+const styles = StyleSheet.create({
+  map: {
+    height: (Dimensions.get('window').height)*0.7,
+  },
+  list: {
+    height: (Dimensions.get('window').height)*0.3,
+  }
+})
+
 const mapStateToProps = (state /*, ownProps*/) => ({
   markers: state.markers,
   //nextPage: state.stats.nextPage,
 })
 
-const styles = StyleSheet.create({
-  map: {
-    height: Dimensions.get('window').height,
-  },
-})
+const mapDispatchToProps = (dispatch) => {
+  return {
+    // dispatching plain actions
+    addMarker: (marker) =>
+      dispatch({
+        type: "ADD_MARKER",
+        payload: {
+          type: marker.type,
+          latitude: marker.latitude,
+          longitude: marker.longitude,
+          approveCount: marker.approveCount
+        },
+      }),
 
-export default connect(mapStateToProps)(MainMapView)
+    removeMarker: (marker) =>
+      dispatch({
+        type: "REMOVE_MARKER",
+        payload: {
+          type: marker.type,
+          latitude: marker.latitude,
+          longitude: marker.longitude,
+          approveCount: marker.approveCount
+      },
+    }),
+  };
+};
+
+
+export default connect(mapStateToProps,mapDispatchToProps)(MainMapView)
