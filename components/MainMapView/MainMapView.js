@@ -5,8 +5,8 @@ import { connect } from 'react-redux'
 import { List, IconButton, Colors } from 'react-native-paper'
 import MqttService from "../../src/core/services/MqttService";
 
-const MainMapView = ({ markers, addMarker, removeMarker }) => {
-  const [isConnected, setIsConnected] = React.useState(false);
+const MainMapView = ({ markers, addMarker }) => {
+ // const [isConnected, setIsConnected] = React.useState(false);
   const [message, setMessage] = React.useState(null);
   const [currentRegion, setCurrentRegion] = React.useState(null);
 
@@ -21,8 +21,14 @@ const MainMapView = ({ markers, addMarker, removeMarker }) => {
         })
       }
     })
-    MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler);
+   // MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler);
   }, [])
+
+  useEffect(() => {
+    console.log("szia5");
+
+
+  },[markers])
 
   const getCurrentLocation = () => {
     return new Promise((resolve, reject) => {
@@ -33,35 +39,30 @@ const MainMapView = ({ markers, addMarker, removeMarker }) => {
     })
   }
   
-  const approve = (event) => {
-    removeMarker(event)
+  const approve = (eventMarker) => {
+  //  removeMarker(event)
+ 
 
-    let newMarker = {
-      address: event.address,
-      latitude: event.latitude,
-      longitude: event.longitude,
-      type: event.type,
-      approveCount: event.approveCount + 1
-    };
-
-    let message = JSON.stringify(newMarker);
+    let message = JSON.stringify(eventMarker);
     MqttService.publishMessage("ApproveWORLD", message);
+    console.log(message)
+
   }  
 
   //----------------------------------- MQTT ----------------------------------------
-  const mqttConnectionLostHandler = () => {
+  /*const mqttConnectionLostHandler = () => {
     setIsConnected(false);
-  };
-
+  };*/
+/*
   const mqttSuccessHandler = () => {
     console.info("connected to mqtt");
     MqttService.subscribe("WORLD", onWORLD);
     MqttService.subscribe("ApproveWORLD", onApproveWORLD);
 
     setIsConnected(true);
-  };
+  };*/
 
-  const onWORLD = (messageFromWorld) => {
+  /*const onWORLD = (messageFromWorld) => {
     let messageJSON = JSON.parse(messageFromWorld);
     addMarker(messageJSON);
     console.log(
@@ -75,7 +76,7 @@ const MainMapView = ({ markers, addMarker, removeMarker }) => {
     setMessage(messageFromWorld);
     console.log(message);
   };
-
+*/
   const onApproveWORLD = (messageFromWorld) => {
     let messageJSON = JSON.parse(messageFromWorld);
     addMarker(messageJSON);
@@ -195,6 +196,17 @@ const mapDispatchToProps = (dispatch) => {
     removeMarker: (marker) =>
       dispatch({
         type: "REMOVE_MARKER",
+        payload: {
+          address: marker.address,
+          type: marker.type,
+          latitude: marker.latitude,
+          longitude: marker.longitude,
+          approveCount: marker.approveCount
+      },
+    }),
+    approveMarker: (marker) =>
+      dispatch({
+        type: "APPROVE_MARKER",
         payload: {
           address: marker.address,
           type: marker.type,

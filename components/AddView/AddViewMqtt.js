@@ -26,8 +26,7 @@ const instructions = Platform.select({
     "Shake or press menu button for dev menu",
 });
 
-const AddViewMqtt = ({ markers, addMarker }) => {
-  const [isConnected, setIsConnected] = React.useState(false);
+const AddViewMqtt = ({ markers }) => {
   const [message, setMessage] = React.useState("");
   const [currentRegion, setCurrentRegion] = React.useState(null);
   const [showDropDown, setShowDropDown] = React.useState(false);
@@ -56,9 +55,14 @@ const AddViewMqtt = ({ markers, addMarker }) => {
         });
       }
     });
-    MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler);
+   // MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler);
     isFirstRender.current = false;
   }, []);
+
+  useEffect(()=> {
+   // React.useState()
+   console.log("marker változott2")
+  },[markers])
 /*
   useEffect(() => {
     if (!isFirstRender.current) {
@@ -76,7 +80,7 @@ const AddViewMqtt = ({ markers, addMarker }) => {
     });
   };
 
-  const onWORLD = (messageFromWorld) => {
+  /*const onWORLD = (messageFromWorld) => {
     let messageJSON = JSON.parse(messageFromWorld);
     addMarker(messageJSON);
     console.log(
@@ -88,18 +92,20 @@ const AddViewMqtt = ({ markers, addMarker }) => {
         messageJSON.longitude
     );
     setMessage(messageFromWorld);
-  };
+  };*/
 
+  /*
   const mqttSuccessHandler = () => {
     console.info("connected to mqtt");
     MqttService.subscribe("WORLD", onWORLD);
 
     setIsConnected(true);
-  };
+  };*/
 
+  /*
   const mqttConnectionLostHandler = () => {
     setIsConnected(false);
-  };
+  };*/
 
   const onPublish = () => {
     console.log("action: " + action);
@@ -185,7 +191,7 @@ const AddViewMqtt = ({ markers, addMarker }) => {
           </Card.Content>
           <Card.Actions>
             <View>
-              {!isConnected && <OfflineNotification />}
+            
 
               <Button
                 style={{ textAlign: "center", alignContent: "center" }}
