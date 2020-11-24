@@ -87,7 +87,7 @@ function reducer(state = initialState, action) {
 
       state = {
         ...state,
-        messages: [...state.messages, newMessage],
+        messages: [ newMessage, ...state.messages],
       };
       return state
 

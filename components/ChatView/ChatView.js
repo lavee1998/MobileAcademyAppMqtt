@@ -43,8 +43,8 @@ const ChatView = ({ messages }) => {
     let length = messages.length;
     console.log("Változott" + messages[length-1]);
 
-    setComponentMessages((previousMessages) =>
-    GiftedChat.append(previousMessages, messages[length-1]));
+   // setComponentMessages((previousMessages) =>
+   // GiftedChat.append(previousMessages, messages[length-1]));
    // setComponentMessages(messages)
    // useState();
     //GiftedChat.append(previousMessages, messageJSON);
@@ -95,7 +95,7 @@ const ChatView = ({ messages }) => {
       </Portal>
 
       <GiftedChat
-        messages={componentMessages}
+        messages={messages}
         onSend={(message) => onSend(message)}
         user={{
           _id: 1,
