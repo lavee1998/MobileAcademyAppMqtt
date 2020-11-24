@@ -65,19 +65,13 @@ function reducer(state = initialState, action) {
         type: action.payload.type,
         approveCount: action.payload.approveCount,
       };
-      /*state.markers.push(newMarker);
-      state.markers = state.markers.sort(
-        (a, b) => b.approveCount - a.approveCount
-      );
-      console.log("teszt");
-      console.log(state.markers);*/
 
-      return {
+      state = {
         ...state,
         markers: [...state.markers, newMarker].sort(
-          (a, b) => b.approveCount - a.approveCount
-        ),
-      };
+          (a, b) => b.approveCount - a.approveCount)
+      }
+      return state
 
     case "ADD_MESSAGE":
       let newMessage = {
@@ -91,10 +85,11 @@ function reducer(state = initialState, action) {
         },
       };
 
-      return {
+      state = {
         ...state,
         messages: [...state.messages, newMessage],
       };
+      return state
 
     case "REMOVE_MARKER":
       state.markers = state.markers.filter(
@@ -105,7 +100,12 @@ function reducer(state = initialState, action) {
           e.latitude.toString() !== action.payload.latitude.toString() ||
           e.longitude.toString() !== action.payload.longitude.toString()
       );
-      return state;
+
+      state = {
+        ...state,
+        markers: [...state.markers]
+      }
+      return state
 
     case "APPROVE_MARKER":
 
