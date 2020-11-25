@@ -146,32 +146,34 @@ const MainMapView = ({ markers, addMarker }) => {
                 default:
                   iconSource = "equal";
               }
-              return (
-                <List.Item
-                  key={i}
-                  title={marker.address}
-                  description={`Approved by ${marker.approveCount} people. DisApproved by ${marker.disApproveCount} people`}
-                  left={(props) => <List.Icon {...props} icon={iconSource} />}
-                  right={() => (
-                    <React.Fragment>
-                      <IconButton
-                        icon="thumb-up"
-                        color={Colors.greenA400}
-                        disabled={marker.isApproved}
-                        size={20}
-                        onPress={() => approve(marker)}
-                      />
-                      <IconButton
-                        icon="thumb-down"
-                        color={Colors.redA200}
-                        disabled={marker.isApproved}
-                        size={20}
-                        onPress={() => disApprove(marker)}
-                      />
-                    </React.Fragment>
-                  )}
-                />
-              );
+              if (marker.disApproveCount < 8) {
+                return (
+                  <List.Item
+                    key={i}
+                    title={marker.address}
+                    description={`Approved by ${marker.approveCount} people. DisApproved by ${marker.disApproveCount} people`}
+                    left={(props) => <List.Icon {...props} icon={iconSource} />}
+                    right={() => (
+                      <React.Fragment>
+                        <IconButton
+                          icon="thumb-up"
+                          color={Colors.greenA400}
+                          disabled={marker.isApproved}
+                          size={20}
+                          onPress={() => approve(marker)}
+                        />
+                        <IconButton
+                          icon="thumb-down"
+                          color={Colors.redA200}
+                          disabled={marker.isApproved}
+                          size={20}
+                          onPress={() => disApprove(marker)}
+                        />
+                      </React.Fragment>
+                    )}
+                  />
+                );
+              }
             })}
           </List.Section>
         </ScrollView>
