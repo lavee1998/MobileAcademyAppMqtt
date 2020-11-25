@@ -57,14 +57,14 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
         " long: " +
         messageJSON.longitude
     );
-    console.log(messageJSON)
+    console.log(messageJSON);
     setMessage(messageFromWorld);
   };
 
   const onWORLDCHAT = (messageFromWorldChat) => {
     let messageJSON = JSON.parse(messageFromWorldChat);
 
-    console.log("ONWORLDCHAT TEST")
+    console.log("ONWORLDCHAT TEST");
     console.log(messageJSON);
     addMessage(messageJSON);
 
@@ -74,21 +74,20 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
   };
 
   const onApproveWORLD = (messageFromWorld) => {
-
     let messageJSON = JSON.parse(messageFromWorld);
-    removeMarker(messageJSON)
+    removeMarker(messageJSON);
 
-    console.log("szia")
-
+    console.log("szia");
 
     let newMarker = {
-        address: messageJSON.address,
-        latitude: messageJSON.latitude,
-        longitude: messageJSON.longitude,
-        type: messageJSON.type,
-        approveCount: messageJSON.approveCount + 1
-      };
-    
+      address: messageJSON.address,
+      latitude: messageJSON.latitude,
+      longitude: messageJSON.longitude,
+      type: messageJSON.type,
+      approveCount: messageJSON.approveCount + 1,
+      isApproved: messageJSON.isApproved,
+    };
+
     addMarker(newMarker);
 
     console.log(
@@ -149,6 +148,7 @@ const mapDispatchToProps = (dispatch) => {
           latitude: marker.latitude,
           longitude: marker.longitude,
           approveCount: marker.approveCount,
+          isApproved: marker.isApproved,
         },
       }),
     addMessage: (message) =>
@@ -161,7 +161,6 @@ const mapDispatchToProps = (dispatch) => {
           user: {
             _id: message[0].user._id,
             name: message[0].user.name,
-            
           },
         },
       }),
@@ -173,9 +172,9 @@ const mapDispatchToProps = (dispatch) => {
           type: marker.type,
           latitude: marker.latitude,
           longitude: marker.longitude,
-          approveCount: marker.approveCount
-      },
-    }),
+          approveCount: marker.approveCount,
+        },
+      }),
   };
 };
 

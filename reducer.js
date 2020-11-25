@@ -8,6 +8,7 @@ const initialState = {
       longitude: 19.200159628750264,
       type: 0,
       approveCount: 3,
+      isApproved: false,
     },
     {
       address: "Vecsés, Pest, Magyarország",
@@ -15,6 +16,7 @@ const initialState = {
       longitude: 19.300159628750264,
       type: 1,
       approveCount: 2,
+      isApproved: false,
     },
     {
       address: "Vecsés, Pest, Magyarország",
@@ -22,6 +24,7 @@ const initialState = {
       longitude: 19.300159628750264,
       type: 2,
       approveCount: 1,
+      isApproved: false,
     },
     {
       address: "Budapest 22, Budapest, Magyarország",
@@ -29,6 +32,7 @@ const initialState = {
       longitude: 19.026731438934803,
       type: 0,
       approveCount: 0,
+      isApproved: false,
     },
   ],
   messages: [
@@ -64,14 +68,16 @@ function reducer(state = initialState, action) {
         longitude: action.payload.longitude,
         type: action.payload.type,
         approveCount: action.payload.approveCount,
+        isApproved: action.payload.isApproved,
       };
 
       state = {
         ...state,
         markers: [...state.markers, newMarker].sort(
-          (a, b) => b.approveCount - a.approveCount)
-      }
-      return state
+          (a, b) => b.approveCount - a.approveCount
+        ),
+      };
+      return state;
 
     case "ADD_MESSAGE":
       let newMessage = {
@@ -87,9 +93,9 @@ function reducer(state = initialState, action) {
 
       state = {
         ...state,
-        messages: [ newMessage, ...state.messages],
+        messages: [newMessage, ...state.messages],
       };
-      return state
+      return state;
 
     case "REMOVE_MARKER":
       state.markers = state.markers.filter(
@@ -103,9 +109,9 @@ function reducer(state = initialState, action) {
 
       state = {
         ...state,
-        markers: [...state.markers]
-      }
-      return state
+        markers: [...state.markers],
+      };
+      return state;
 
     case "APPROVE_MARKER":
 

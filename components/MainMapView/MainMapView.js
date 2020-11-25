@@ -1,12 +1,19 @@
-import React, { Component, useEffect } from 'react'
-import { View, Text, StyleSheet, Dimensions, Image, ScrollView } from 'react-native'
-import MapView, { AnimatedRegion, Marker } from 'react-native-maps'
-import { connect } from 'react-redux'
-import { List, IconButton, Colors } from 'react-native-paper'
+import React, { Component, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  Image,
+  ScrollView,
+} from "react-native";
+import MapView, { AnimatedRegion, Marker } from "react-native-maps";
+import { connect } from "react-redux";
+import { List, IconButton, Colors } from "react-native-paper";
 import MqttService from "../../src/core/services/MqttService";
 
 const MainMapView = ({ markers, addMarker }) => {
- // const [isConnected, setIsConnected] = React.useState(false);
+  // const [isConnected, setIsConnected] = React.useState(false);
   const [message, setMessage] = React.useState(null);
   const [currentRegion, setCurrentRegion] = React.useState(null);
 
@@ -18,42 +25,45 @@ const MainMapView = ({ markers, addMarker }) => {
           longitude: position.coords.longitude,
           latitudeDelta: 0.0001,
           longitudeDelta: 0.0001,
-        })
+        });
       }
-    })
-   // MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler);
-  }, [])
+    });
+    // MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler);
+  }, []);
 
   useEffect(() => {
     console.log("szia5");
-
-
-  },[markers])
+  }, [markers]);
 
   const getCurrentLocation = () => {
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
         (position) => resolve(position),
         (e) => reject(e)
-      )
-    })
-  }
-  
+      );
+    });
+  };
+
   const approve = (eventMarker) => {
-  //  removeMarker(event)
- 
+    //  removeMarker(event)
+    console.log("próba");
 
-    let message = JSON.stringify(eventMarker);
-    MqttService.publishMessage("ApproveWORLD", message);
-    console.log(message)
-
-  }  
+    if (eventMarker.isApproved === false) {
+      console.log("szia");
+      let messageJSON = {
+        ...eventMarker,
+        isApproved: true,
+      };
+      let message = JSON.stringify(messageJSON);
+      MqttService.publishMessage("ApproveWORLD", message);
+    }
+  };
 
   //----------------------------------- MQTT ----------------------------------------
   /*const mqttConnectionLostHandler = () => {
     setIsConnected(false);
   };*/
-/*
+  /*
   const mqttSuccessHandler = () => {
     console.info("connected to mqtt");
     MqttService.subscribe("WORLD", onWORLD);
@@ -98,32 +108,38 @@ const MainMapView = ({ markers, addMarker }) => {
       <View style={styles.list}>
         <ScrollView>
           <List.Section>
-            {markers.map((marker,i) => {
-              var iconSource = ""
-              switch(marker.type) {
+            {markers.map((marker, i) => {
+              var iconSource = "";
+              switch (marker.type) {
                 case 0:
-                  iconSource = "shield-check"
-                  break
+                  iconSource = "shield-check";
+                  break;
                 case 1:
-                  iconSource = "alert"
-                  break
+                  iconSource = "alert";
+                  break;
                 case 2:
-                  iconSource = "wrench"
-                  break
+                  iconSource = "wrench";
+                  break;
                 default:
-                  iconSource = "equal"
+                  iconSource = "equal";
               }
-              return (<List.Item key={i}
-                                title={marker.address}
-                                description= {`Approved by ${marker.approveCount} people`}
-                                left={props => <List.Icon {...props} icon={iconSource} />}
-                                right={() => <IconButton
-                                  icon="check-bold"
-                                  color= {Colors.greenA400}
-                                  size={20}
-                                  onPress={() => approve(marker)}
-                                />}
-                      />)
+              return (
+                <List.Item
+                  key={i}
+                  title={marker.address}
+                  description={`Approved by ${marker.approveCount} people`}
+                  left={(props) => <List.Icon {...props} icon={iconSource} />}
+                  right={() => (
+                    <IconButton
+                      icon="check-bold"
+                      color={Colors.greenA400}
+                      disabled={marker.isApproved}
+                      size={20}
+                      onPress={() => approve(marker)}
+                    />
+                  )}
+                />
+              );
             })}
           </List.Section>
         </ScrollView>
@@ -135,48 +151,44 @@ const MainMapView = ({ markers, addMarker }) => {
         defaultRegion={currentRegion}
       >
         {markers.map((marker, i) => {
-          var markerSource = ""
+          var markerSource = "";
           switch (marker.type) {
-            case 0: 
-              markerSource = require('../../images/tc_logo.png')
-              break
-            case 1: 
-              markerSource = require('../../images/traffic_accident.png')
-              break
-            case 2: 
-              markerSource = require('../../images/construction_logo.png')
-              break
-            default: markerSource = require('../../images/tc_logo.png')
+            case 0:
+              markerSource = require("../../images/tc_logo.png");
+              break;
+            case 1:
+              markerSource = require("../../images/traffic_accident.png");
+              break;
+            case 2:
+              markerSource = require("../../images/construction_logo.png");
+              break;
+            default:
+              markerSource = require("../../images/tc_logo.png");
           }
           return (
-            <MapView.Marker key={i}
-                            coordinate={marker}>
-              <Image
-                source={markerSource}
-                style={{ height: 50, width: 55 }}
-              />
+            <MapView.Marker key={i} coordinate={marker}>
+              <Image source={markerSource} style={{ height: 50, width: 55 }} />
             </MapView.Marker>
-          )
+          );
         })}
       </MapView>
     </View>
-  )
-}
-
+  );
+};
 
 const styles = StyleSheet.create({
   map: {
-    height: (Dimensions.get('window').height)*0.7,
+    height: Dimensions.get("window").height * 0.7,
   },
   list: {
-    height: (Dimensions.get('window').height)*0.3,
-  }
-})
+    height: Dimensions.get("window").height * 0.3,
+  },
+});
 
 const mapStateToProps = (state /*, ownProps*/) => ({
   markers: state.markers,
   //nextPage: state.stats.nextPage,
-})
+});
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -189,7 +201,7 @@ const mapDispatchToProps = (dispatch) => {
           type: marker.type,
           latitude: marker.latitude,
           longitude: marker.longitude,
-          approveCount: marker.approveCount
+          approveCount: marker.approveCount,
         },
       }),
 
@@ -201,9 +213,9 @@ const mapDispatchToProps = (dispatch) => {
           type: marker.type,
           latitude: marker.latitude,
           longitude: marker.longitude,
-          approveCount: marker.approveCount
-      },
-    }),
+          approveCount: marker.approveCount,
+        },
+      }),
     approveMarker: (marker) =>
       dispatch({
         type: "APPROVE_MARKER",
@@ -212,11 +224,10 @@ const mapDispatchToProps = (dispatch) => {
           type: marker.type,
           latitude: marker.latitude,
           longitude: marker.longitude,
-          approveCount: marker.approveCount
-      },
-    }),
+          approveCount: marker.approveCount,
+        },
+      }),
   };
 };
 
-
-export default connect(mapStateToProps,mapDispatchToProps)(MainMapView)
+export default connect(mapStateToProps, mapDispatchToProps)(MainMapView);

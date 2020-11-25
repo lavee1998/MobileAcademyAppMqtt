@@ -35,7 +35,6 @@ const AddViewMqtt = ({ markers }) => {
 
   const isFirstRender = useRef(true);
 
-
   const actionList = [
     { value: 0, label: "Traffipax" },
     { value: 1, label: "Accident" },
@@ -55,15 +54,15 @@ const AddViewMqtt = ({ markers }) => {
         });
       }
     });
-   // MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler);
+    // MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler);
     isFirstRender.current = false;
   }, []);
 
-  useEffect(()=> {
-   // React.useState()
-   console.log("marker változott2")
-  },[markers])
-/*
+  useEffect(() => {
+    // React.useState()
+    console.log("marker változott2");
+  }, [markers]);
+  /*
   useEffect(() => {
     if (!isFirstRender.current) {
       console.log("message: " + message);
@@ -110,25 +109,26 @@ const AddViewMqtt = ({ markers }) => {
   const onPublish = () => {
     console.log("action: " + action);
 
-    const url = `https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=${marker.latitude}%2C${marker.longitude}&mode=retrieveAddresses&maxresults=1&gen=9&apiKey=99MVsWZF5b6TLmiXpC8MJlQI_2twZtLiYMluOmZ8zu0`
+    const url = `https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=${marker.latitude}%2C${marker.longitude}&mode=retrieveAddresses&maxresults=1&gen=9&apiKey=99MVsWZF5b6TLmiXpC8MJlQI_2twZtLiYMluOmZ8zu0`;
     fetch(url)
-      .then(res => res.json())
+      .then((res) => res.json())
       .then((json) => {
         let newMarker = {
           address: json.Response.View[0].Result[0].Location.Address.Label,
           latitude: marker.latitude,
           longitude: marker.longitude,
           type: action,
-          approveCount: 0
+          approveCount: 0,
+          isApproved: false,
         };
-        console.log(newMarker)
+        console.log(newMarker);
         let message = JSON.stringify(newMarker);
         MqttService.publishMessage("WORLD", message);
       })
       .catch((e) => {
-        console.log('Error in getAddressFromCoordinates', e)
-        return e
-      })
+        console.log("Error in getAddressFromCoordinates", e);
+        return e;
+      });
   };
 
   return (
@@ -191,8 +191,6 @@ const AddViewMqtt = ({ markers }) => {
           </Card.Content>
           <Card.Actions>
             <View>
-            
-
               <Button
                 style={{ textAlign: "center", alignContent: "center" }}
                 onPress={onPublish}
@@ -244,7 +242,7 @@ const mapDispatchToProps = (dispatch) => {
           type: marker.type,
           latitude: marker.latitude,
           longitude: marker.longitude,
-          approveCount: marker.approveCount
+          approveCount: marker.approveCount,
         },
       }),
   };
