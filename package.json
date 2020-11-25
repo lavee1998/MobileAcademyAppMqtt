@@ -19,6 +19,7 @@
     "react-native-paper": "^4.3.0",
     "react-native-paper-dropdown": "0.0.5",
     "react-native-picker-select": "^8.0.2",
+    "react-native-uuid-generator": "^6.1.1",
     "react-native-vector-icons": "^7.1.0",
     "react-native-web": "~0.13.12",
     "react-redux": "^7.2.2",

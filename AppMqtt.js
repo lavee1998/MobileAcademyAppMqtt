@@ -77,8 +77,6 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
     let messageJSON = JSON.parse(messageFromWorld);
     removeMarker(messageJSON);
 
-    console.log("szia");
-
     let newMarker = {
       address: messageJSON.address,
       latitude: messageJSON.latitude,
@@ -88,7 +86,7 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
       isApproved: messageJSON.isApproved,
     };
 
-    addMarker(newMarker);
+    addMarker(messageJSON);
 
     console.log(
       "type: " +
@@ -148,6 +146,7 @@ const mapDispatchToProps = (dispatch) => {
           latitude: marker.latitude,
           longitude: marker.longitude,
           approveCount: marker.approveCount,
+          disApproveCount: marker.disApproveCount,
           isApproved: marker.isApproved,
         },
       }),

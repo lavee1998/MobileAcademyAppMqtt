@@ -46,14 +46,37 @@ const MainMapView = ({ markers, addMarker }) => {
 
   const approve = (eventMarker) => {
     //  removeMarker(event)
+
+    if (eventMarker.isApproved === false) {
+      let messageJSON = {
+        address: eventMarker.address,
+        latitude: eventMarker.latitude,
+        longitude: eventMarker.longitude,
+        type: eventMarker.type,
+        approveCount: eventMarker.approveCount + 1,
+        disApproveCount: eventMarker.disApproveCount,
+        isApproved: true,
+      };
+      let message = JSON.stringify(messageJSON);
+      MqttService.publishMessage("ApproveWORLD", message);
+    }
+  };
+
+  const disApprove = (eventMarker) => {
+    //  removeMarker(event)
     console.log("próba");
 
     if (eventMarker.isApproved === false) {
-      console.log("szia");
       let messageJSON = {
-        ...eventMarker,
+        address: eventMarker.address,
+        latitude: eventMarker.latitude,
+        longitude: eventMarker.longitude,
+        type: eventMarker.type,
+        approveCount: eventMarker.approveCount,
+        disApproveCount: eventMarker.disApproveCount + 1,
         isApproved: true,
       };
+
       let message = JSON.stringify(messageJSON);
       MqttService.publishMessage("ApproveWORLD", message);
     }
@@ -127,16 +150,25 @@ const MainMapView = ({ markers, addMarker }) => {
                 <List.Item
                   key={i}
                   title={marker.address}
-                  description={`Approved by ${marker.approveCount} people`}
+                  description={`Approved by ${marker.approveCount} people. DisApproved by ${marker.disApproveCount} people`}
                   left={(props) => <List.Icon {...props} icon={iconSource} />}
                   right={() => (
-                    <IconButton
-                      icon="check-bold"
-                      color={Colors.greenA400}
-                      disabled={marker.isApproved}
-                      size={20}
-                      onPress={() => approve(marker)}
-                    />
+                    <React.Fragment>
+                      <IconButton
+                        icon="thumb-up"
+                        color={Colors.greenA400}
+                        disabled={marker.isApproved}
+                        size={20}
+                        onPress={() => approve(marker)}
+                      />
+                      <IconButton
+                        icon="thumb-down"
+                        color={Colors.redA200}
+                        disabled={marker.isApproved}
+                        size={20}
+                        onPress={() => disApprove(marker)}
+                      />
+                    </React.Fragment>
                   )}
                 />
               );
@@ -182,6 +214,8 @@ const styles = StyleSheet.create({
   },
   list: {
     height: Dimensions.get("window").height * 0.3,
+    borderBottomWidth: 12,
+    borderBottomColor: "darkcyan",
   },
 });
 

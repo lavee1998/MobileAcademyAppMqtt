@@ -8,6 +8,7 @@ const initialState = {
       longitude: 19.200159628750264,
       type: 0,
       approveCount: 3,
+      disApproveCount: 0,
       isApproved: false,
     },
     {
@@ -16,6 +17,7 @@ const initialState = {
       longitude: 19.300159628750264,
       type: 1,
       approveCount: 2,
+      disApproveCount: 1,
       isApproved: false,
     },
     {
@@ -24,6 +26,8 @@ const initialState = {
       longitude: 19.300159628750264,
       type: 2,
       approveCount: 1,
+      disApproveCount: 13,
+
       isApproved: false,
     },
     {
@@ -32,6 +36,7 @@ const initialState = {
       longitude: 19.026731438934803,
       type: 0,
       approveCount: 0,
+      disApproveCount: 0,
       isApproved: false,
     },
   ],
@@ -68,6 +73,7 @@ function reducer(state = initialState, action) {
         longitude: action.payload.longitude,
         type: action.payload.type,
         approveCount: action.payload.approveCount,
+        disApproveCount: action.payload.disApproveCount,
         isApproved: action.payload.isApproved,
       };
 
@@ -102,7 +108,6 @@ function reducer(state = initialState, action) {
         (e) =>
           e.address != action.payload.address ||
           e.type !== action.payload.type ||
-          e.approveCount !== action.payload.approveCount ||
           e.latitude.toString() !== action.payload.latitude.toString() ||
           e.longitude.toString() !== action.payload.longitude.toString()
       );
