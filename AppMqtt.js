@@ -49,15 +49,6 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
   const onWORLD = (messageFromWorld) => {
     let messageJSON = JSON.parse(messageFromWorld);
     addMarker(messageJSON);
-    console.log(
-      "type: " +
-        messageJSON.type +
-        " lat: " +
-        messageJSON.latitude +
-        " long: " +
-        messageJSON.longitude
-    );
-    console.log(messageJSON);
     setMessage(messageFromWorld);
   };
 
@@ -76,29 +67,7 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
   const onApproveWORLD = (messageFromWorld) => {
     let messageJSON = JSON.parse(messageFromWorld);
     removeMarker(messageJSON);
-
-    let newMarker = {
-      address: messageJSON.address,
-      latitude: messageJSON.latitude,
-      longitude: messageJSON.longitude,
-      type: messageJSON.type,
-      approveCount: messageJSON.approveCount + 1,
-      isApproved: messageJSON.isApproved,
-    };
-
     addMarker(messageJSON);
-
-    console.log(
-      "type: " +
-        messageJSON.type +
-        " lat: " +
-        messageJSON.latitude +
-        " long: " +
-        messageJSON.longitude +
-        " count: " +
-        messageJSON.approveCount
-    );
-    //setMessage(messageFromWorld);
   };
 
   const mqttConnectionLostHandler = () => {
@@ -115,7 +84,7 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
     <React.Fragment>
       <Appbar.Header>
         <Appbar.BackAction onPress={_goBack} />
-        <Appbar.Content title="Mobil Academy" subtitle="helló Levi" />
+        <Appbar.Content title="Mobil Academy" subtitle="Limited Edition" />
       </Appbar.Header>
 
       {!isConnected && <OfflineNotification />}

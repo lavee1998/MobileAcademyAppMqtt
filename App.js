@@ -28,16 +28,6 @@ export default App = () => {
     <Provider store={store}>
       <PaperProvider theme={theme}>
         <AppMqtt/>
-      {/*  <Appbar.Header>
-          <Appbar.BackAction onPress={_goBack} />
-          <Appbar.Content title="Mobil Academy" subtitle="helló levi" />
-        </Appbar.Header>
-
-        <BottomNavigation
-          navigationState={{ index, routes }}
-          onIndexChange={setIndex}
-          renderScene={renderScene}
-      />*/}
       </PaperProvider>
     </Provider>
   )

@@ -1,11 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
 import React, { Component, useEffect, useRef } from "react";
 import { Platform, StyleSheet, Text, View, Alert } from "react-native";
 import MqttService from "../../src/core/services/MqttService";
@@ -27,7 +19,6 @@ const instructions = Platform.select({
 });
 
 const AddViewMqtt = ({ markers }) => {
-  const [message, setMessage] = React.useState("");
   const [currentRegion, setCurrentRegion] = React.useState(null);
   const [showDropDown, setShowDropDown] = React.useState(false);
   const [action, setAction] = React.useState();
@@ -42,8 +33,6 @@ const AddViewMqtt = ({ markers }) => {
   ];
 
   useEffect(() => {
-    console.log("type: " + action);
-
     getCurrentLocation().then((position) => {
       if (position) {
         setCurrentRegion({
@@ -54,21 +43,12 @@ const AddViewMqtt = ({ markers }) => {
         });
       }
     });
-    // MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler);
     isFirstRender.current = false;
   }, []);
 
   useEffect(() => {
-    // React.useState()
-    console.log("marker változott2");
+    console.log("Markers changed");
   }, [markers]);
-  /*
-  useEffect(() => {
-    if (!isFirstRender.current) {
-      console.log("message: " + message);
-      Alert.alert(message);
-    }
-  }, [message]);*/
 
   const getCurrentLocation = () => {
     return new Promise((resolve, reject) => {
@@ -79,36 +59,7 @@ const AddViewMqtt = ({ markers }) => {
     });
   };
 
-  /*const onWORLD = (messageFromWorld) => {
-    let messageJSON = JSON.parse(messageFromWorld);
-    addMarker(messageJSON);
-    console.log(
-      "type: " +
-        messageJSON.type +
-        " lat: " +
-        messageJSON.latitude +
-        " long: " +
-        messageJSON.longitude
-    );
-    setMessage(messageFromWorld);
-  };*/
-
-  /*
-  const mqttSuccessHandler = () => {
-    console.info("connected to mqtt");
-    MqttService.subscribe("WORLD", onWORLD);
-
-    setIsConnected(true);
-  };*/
-
-  /*
-  const mqttConnectionLostHandler = () => {
-    setIsConnected(false);
-  };*/
-
   const onPublish = () => {
-    console.log("action: " + action);
-
     const url = `https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=${marker.latitude}%2C${marker.longitude}&mode=retrieveAddresses&maxresults=1&gen=9&apiKey=99MVsWZF5b6TLmiXpC8MJlQI_2twZtLiYMluOmZ8zu0`;
     fetch(url)
       .then((res) => res.json())
@@ -119,9 +70,10 @@ const AddViewMqtt = ({ markers }) => {
           longitude: marker.longitude,
           type: action,
           approveCount: 0,
+          disApproveCount: 0,
           isApproved: false,
         };
-        console.log(newMarker);
+
         let message = JSON.stringify(newMarker);
         MqttService.publishMessage("WORLD", message);
       })
@@ -137,7 +89,7 @@ const AddViewMqtt = ({ markers }) => {
         <Card>
           <Card.Title title="Send new perception" />
           <Card.Content>
-            <Title>1. Choose the type(test)</Title>
+            <Title>1. Choose the type</Title>
 
             <DropDown
               label={"Type of action"}
@@ -243,6 +195,7 @@ const mapDispatchToProps = (dispatch) => {
           latitude: marker.latitude,
           longitude: marker.longitude,
           approveCount: marker.approveCount,
+          disApproveCount: marker.disApproveCount
         },
       }),
   };

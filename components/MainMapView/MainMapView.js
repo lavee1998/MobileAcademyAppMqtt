@@ -13,8 +13,6 @@ import { List, IconButton, Colors } from "react-native-paper";
 import MqttService from "../../src/core/services/MqttService";
 
 const MainMapView = ({ markers, addMarker }) => {
-  // const [isConnected, setIsConnected] = React.useState(false);
-  const [message, setMessage] = React.useState(null);
   const [currentRegion, setCurrentRegion] = React.useState(null);
 
   useEffect(() => {
@@ -28,11 +26,10 @@ const MainMapView = ({ markers, addMarker }) => {
         });
       }
     });
-    // MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler);
   }, []);
 
   useEffect(() => {
-    console.log("szia5");
+    console.log("Markers changed.");
   }, [markers]);
 
   const getCurrentLocation = () => {
@@ -45,7 +42,6 @@ const MainMapView = ({ markers, addMarker }) => {
   };
 
   const approve = (eventMarker) => {
-    //  removeMarker(event)
 
     if (eventMarker.isApproved === false) {
       let messageJSON = {
@@ -63,8 +59,6 @@ const MainMapView = ({ markers, addMarker }) => {
   };
 
   const disApprove = (eventMarker) => {
-    //  removeMarker(event)
-    console.log("próba");
 
     if (eventMarker.isApproved === false) {
       let messageJSON = {
@@ -80,50 +74,6 @@ const MainMapView = ({ markers, addMarker }) => {
       let message = JSON.stringify(messageJSON);
       MqttService.publishMessage("ApproveWORLD", message);
     }
-  };
-
-  //----------------------------------- MQTT ----------------------------------------
-  /*const mqttConnectionLostHandler = () => {
-    setIsConnected(false);
-  };*/
-  /*
-  const mqttSuccessHandler = () => {
-    console.info("connected to mqtt");
-    MqttService.subscribe("WORLD", onWORLD);
-    MqttService.subscribe("ApproveWORLD", onApproveWORLD);
-
-    setIsConnected(true);
-  };*/
-
-  /*const onWORLD = (messageFromWorld) => {
-    let messageJSON = JSON.parse(messageFromWorld);
-    addMarker(messageJSON);
-    console.log(
-      "type: " +
-        messageJSON.type +
-        " lat: " +
-        messageJSON.latitude +
-        " long: " +
-        messageJSON.longitude
-    );
-    setMessage(messageFromWorld);
-    console.log(message);
-  };
-*/
-  const onApproveWORLD = (messageFromWorld) => {
-    let messageJSON = JSON.parse(messageFromWorld);
-    addMarker(messageJSON);
-    console.log(
-      "type: " +
-        messageJSON.type +
-        " lat: " +
-        messageJSON.latitude +
-        " long: " +
-        messageJSON.longitude +
-        " count: " +
-        messageJSON.approveCount
-    );
-    setMessage(messageFromWorld);
   };
 
   return (
@@ -238,6 +188,7 @@ const mapDispatchToProps = (dispatch) => {
           latitude: marker.latitude,
           longitude: marker.longitude,
           approveCount: marker.approveCount,
+          disApproveCount: marker.disApproveCount
         },
       }),
 
@@ -250,6 +201,7 @@ const mapDispatchToProps = (dispatch) => {
           latitude: marker.latitude,
           longitude: marker.longitude,
           approveCount: marker.approveCount,
+          disApproveCount: marker.disApproveCount
         },
       }),
     approveMarker: (marker) =>
@@ -261,6 +213,7 @@ const mapDispatchToProps = (dispatch) => {
           latitude: marker.latitude,
           longitude: marker.longitude,
           approveCount: marker.approveCount,
+          disApproveCount: marker.disApproveCount
         },
       }),
   };
