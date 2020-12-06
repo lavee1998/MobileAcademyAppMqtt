@@ -1,15 +1,12 @@
-import React, { Component, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Platform, StyleSheet, Text, View, Alert } from "react-native";
 import MqttService from "../../src/core/services/MqttService";
-import OfflineNotification from "../../src/core/components/OfflineNotification";
-
-import { connect, useDispatch } from "react-redux";
-
-import { SafeAreaView } from "react-native";
-import { Card, Title, Button, TextInput } from "react-native-paper";
-import MapView, { AnimatedRegion } from "react-native-maps";
-import DropDown from "react-native-paper-dropdown";
+import { connect } from "react-redux";
+import { Card, Title, Button } from "react-native-paper";
+import MapView from "react-native-maps";
 import { ScrollView, Image } from "react-native";
+import Icon from 'react-native-vector-icons/Feather';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const instructions = Platform.select({
   ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
@@ -20,16 +17,15 @@ const instructions = Platform.select({
 
 const AddViewMqtt = ({ markers }) => {
   const [currentRegion, setCurrentRegion] = React.useState(null);
-  const [showDropDown, setShowDropDown] = React.useState(false);
   const [action, setAction] = React.useState();
   const [marker, setMarker] = React.useState();
 
   const isFirstRender = useRef(true);
 
   const actionList = [
-    { value: 0, label: "Traffipax" },
-    { value: 1, label: "Accident" },
-    { value: 2, label: "Construction" },
+    { value: 0, label: "Traffipax", icon: () => <Icon name="map-pin" size={18} color="#900" />, hidden: true },
+    { value: 1, label: "Accident", icon: () => <Icon name="map-pin" size={18} color="#900" /> },
+    { value: 2, label: "Construction", icon: () => <Icon name="map-pin" size={18} color="#900" /> },
   ];
 
   useEffect(() => {
@@ -91,18 +87,16 @@ const AddViewMqtt = ({ markers }) => {
           <Card.Content>
             <Title>1. Choose the type</Title>
 
-            <DropDown
-              label={"Type of action"}
-              mode={"outlined"}
-              value={action}
-              setValue={setAction}
-              list={actionList}
-              visible={showDropDown}
-              showDropDown={() => setShowDropDown(true)}
-              onDismiss={() => setShowDropDown(false)}
-              inputProps={{
-                right: <TextInput.Icon name={"menu-down"} />,
-              }}
+            <DropDownPicker
+                items={actionList}
+                defaultValue={0}
+                containerStyle={{height: 40}}
+                style={{backgroundColor: '#fafafa'}}
+                itemStyle={{
+                    justifyContent: 'flex-start'
+                }}
+                dropDownStyle={{backgroundColor: '#fafafa'}}
+                onChangeItem={item => setAction(item.value)}
             />
             <Title>2. Choose the location</Title>
             <View>

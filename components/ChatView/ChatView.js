@@ -16,16 +16,13 @@ import {
 import OfflineNotification from "../../src/core/components/OfflineNotification";
 
 const ChatView = ({ messages }) => {
-  const [componentMessages, setComponentMessages] = useState(messages);
-
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState();
   const [isDialogVisible, setIsDialogVisible] = useState(true);
 
   useEffect(() => {
     UUIDGenerator.getRandomUUID().then((uuid) => {
-      console.log(uuid);
-      setUserId(uuid);
+        setUserId(uuid);
     });
   }, []);
 
