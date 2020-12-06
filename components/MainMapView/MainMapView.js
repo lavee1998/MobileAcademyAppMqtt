@@ -96,35 +96,34 @@ const MainMapView = ({ markers, addMarker }) => {
                 default:
                   iconSource = "equal";
               }
-              if (marker.disApproveCount < 8) {
-                return (
-                  <List.Item
-                    key={i}
-                    title={marker.address}
-                    description={`Approved by ${marker.approveCount} people. DisApproved by ${marker.disApproveCount} people`}
-                    left={(props) => <List.Icon {...props} icon={iconSource} />}
-                    right={() => (
-                      <React.Fragment>
-                        <IconButton
-                          icon="thumb-up"
-                          color={Colors.greenA400}
-                          disabled={marker.isApproved}
-                          size={20}
-                          onPress={() => approve(marker)}
-                        />
-                        <IconButton
-                          icon="thumb-down"
-                          color={Colors.redA200}
-                          disabled={marker.isApproved}
-                          size={20}
-                          onPress={() => disApprove(marker)}
-                        />
-                      </React.Fragment>
-                    )}
-                  />
-                );
-              }
-            })}
+              return (
+                <List.Item
+                  key={i}
+                  title={marker.address}
+                  description={`Approved by ${marker.approveCount} people. DisApproved by ${marker.disApproveCount} people`}
+                  left={(props) => <List.Icon {...props} icon={iconSource} />}
+                  right={() => (
+                    <React.Fragment>
+                      <IconButton
+                        icon="thumb-up"
+                        color={Colors.greenA400}
+                        disabled={marker.isApproved}
+                        size={20}
+                        onPress={() => approve(marker)}
+                      />
+                      <IconButton
+                        icon="thumb-down"
+                        color={Colors.redA200}
+                        disabled={marker.isApproved}
+                        size={20}
+                        onPress={() => disApprove(marker)}
+                      />
+                    </React.Fragment>
+                  )}
+                />
+              );
+            }
+          )}
           </List.Section>
         </ScrollView>
       </View>
@@ -150,7 +149,7 @@ const MainMapView = ({ markers, addMarker }) => {
               markerSource = require("../../images/tc_logo.png");
           }
           return (
-            <MapView.Marker key={i} coordinate={marker}>
+            <MapView.Marker key={i} coordinate={marker} title={marker.createdAt.toLocaleString('en-GB', { timeZone: 'UTC' })}>
               <Image source={markerSource} style={{ height: 50, width: 55 }} />
             </MapView.Marker>
           );

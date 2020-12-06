@@ -10,6 +10,7 @@ const initialState = {
       approveCount: 3,
       disApproveCount: 0,
       isApproved: false,
+      createdAt: new Date(),
     },
     {
       address: "Vecsés, Pest, Magyarország",
@@ -17,8 +18,9 @@ const initialState = {
       longitude: 19.300159628750264,
       type: 1,
       approveCount: 2,
-      disApproveCount: 1,
+      disApproveCount: 7,
       isApproved: false,
+      createdAt: new Date(),
     },
     {
       address: "Vecsés, Pest, Magyarország",
@@ -26,9 +28,9 @@ const initialState = {
       longitude: 19.300159628750264,
       type: 2,
       approveCount: 1,
-      disApproveCount: 13,
-
+      disApproveCount: 7,
       isApproved: false,
+      createdAt: new Date(),
     },
     {
       address: "Budapest 22, Budapest, Magyarország",
@@ -38,6 +40,7 @@ const initialState = {
       approveCount: 0,
       disApproveCount: 0,
       isApproved: false,
+      createdAt: new Date()
     },
   ],
   messages: [
@@ -67,6 +70,7 @@ const initialState = {
 function reducer(state = initialState, action) {
   switch (action.type) {
     case "ADD_MARKER":
+      if(action.payload.disApproveCount >= 8) return state;
       let newMarker = {
         address: action.payload.address,
         latitude: action.payload.latitude,
@@ -75,6 +79,7 @@ function reducer(state = initialState, action) {
         approveCount: action.payload.approveCount,
         disApproveCount: action.payload.disApproveCount,
         isApproved: action.payload.isApproved,
+        createdAt: new Date(),
       };
 
       state = {

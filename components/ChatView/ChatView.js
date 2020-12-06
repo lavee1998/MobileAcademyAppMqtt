@@ -31,6 +31,10 @@ const ChatView = ({ messages }) => {
     MqttService.publishMessage("WORLDCHAT", messageString);
   }, []);
 
+  useEffect(() => {
+    console.log("Messages changed");
+  }, [messages]);
+
   return (
     <React.Fragment>
       <Portal>
