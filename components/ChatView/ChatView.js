@@ -1,9 +1,7 @@
 import { GiftedChat } from "react-native-gifted-chat";
 import React, { useState, useCallback, useEffect } from "react";
 import MqttService from "../../src/core/services/MqttService";
-import { View, Alert } from "react-native";
 import { connect } from "react-redux";
-import UUIDGenerator from "react-native-uuid-generator";
 
 import {
   Button,
@@ -21,13 +19,22 @@ const ChatView = ({ messages }) => {
   const [isDialogVisible, setIsDialogVisible] = useState(true);
 
   useEffect(() => {
-    UUIDGenerator.getRandomUUID().then((uuid) => {
-        setUserId(uuid);
-    });
+    let id = uuidv4()
+    setUserId(id)
   }, []);
 
+  const uuidv4 = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
   const onSend = useCallback((messageJSON = []) => {
+    console.log("MESSAGE JSON: ")
+    console.log(messageJSON)
     let messageString = JSON.stringify(messageJSON);
+    console.log(messageString)
     MqttService.publishMessage("WORLDCHAT", messageString);
   }, []);
 

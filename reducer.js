@@ -92,11 +92,11 @@ function reducer(state = initialState, action) {
 
     case "ADD_MESSAGE":
       let newMessage = {
-        _id: action.payload.id,
+        _id: action.payload._id,
         text: action.payload.text,
         createdAt: action.payload.createdAt,
         user: {
-          _id: action.payload.user.id,
+          _id: action.payload.user._id,
           name: action.payload.user.name,
           avatar: action.payload.user.avatar,
         },
