@@ -75,7 +75,7 @@ const MainMapView = ({ markers, addMarker }) => {
 
       let message = JSON.stringify(messageJSON);
       // MqttService.publishMessage("ApproveWORLD", message);
-      fetch(`http://127.0.0.1:8000/voting/?message=${message}`);
+      fetch(`http://127.0.0.1:8000/vote/?message=${message}`);
 
     }
   };
