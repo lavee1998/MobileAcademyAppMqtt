@@ -1,31 +1,23 @@
-Object.defineProperty(exports, '__esModule', { value: true });
+Object.defineProperty(exports, "__esModule", { value: true });
 
-require('./mqtt');
+require("./mqtt");
 
 // Set up an in-memory alternative to global localStorage
 
 const myStorage = {
+  setItem: (key, item) => {
+    myStorage[key] = item;
+  },
 
-setItem: (key, item) => {
+  getItem: (key) => myStorage[key],
 
-myStorage[key] =item;
-
-},
-
-getItem:key=>myStorage[key],
-
-removeItem:key=> {
-
-deletemyStorage[key];
-
-},
-
+  removeItem: (key) => {
+    deletemyStorage[key];
+  },
 };
 
 function init() {
-
-global.localStorage=myStorage;
-
+  global.localStorage = myStorage;
 }
 
 exports.default = init;

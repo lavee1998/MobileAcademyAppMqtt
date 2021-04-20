@@ -18,6 +18,8 @@ import { connect } from "react-redux";
 import MqttService from "./src/core/services/MqttService";
 import OfflineNotification from "./src/core/components/OfflineNotification";
 
+//var mqtt = require('@taoqf/react-native-mqtt')
+
 const Map = () => <MainMapView />;
 const Add = () => <AddView />;
 const Chat = () => <ChatView />;
@@ -25,6 +27,7 @@ const Chat = () => <ChatView />;
 const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
   const _goBack = () => console.log("Went back");
   const [isConnected, setIsConnected] = React.useState(false);
+  let client;
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
@@ -35,15 +38,21 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
 
   useEffect(() => {
     MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler);
+    //client = mqtt.connect('wss://mab.inf.elte.hu/mqttservice')
   }, []);
 
   const mqttSuccessHandler = () => {
     console.info("connected to mqtt");
-    MqttService.subscribe("WORLD", onWORLD);
-    MqttService.subscribe("WORLDCHAT", onWORLDCHAT);
-    MqttService.subscribe("ApproveWORLD", onApproveWORLD);
+    // MqttService.subscribe("WORLD", onWORLD);
+    // MqttService.subscribe("WORLDCHAT", onWORLDCHAT);
+    // MqttService.subscribe("ApproveWORLD", onApproveWORLD);
 
     setIsConnected(true);
+  };
+
+  const mqttConnectionLostHandler = () => {
+    console.log("nemá")
+    setIsConnected(false);
   };
 
   const onWORLD = (messageFromWorld) => {
@@ -70,9 +79,7 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
     addMarker(messageJSON);
   };
 
-  const mqttConnectionLostHandler = () => {
-    setIsConnected(false);
-  };
+  
 
   const renderScene = BottomNavigation.SceneMap({
     add: Add,

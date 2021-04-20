@@ -36,6 +36,8 @@ const ChatView = ({ messages }) => {
     let messageString = JSON.stringify(messageJSON);
     console.log(messageString)
     MqttService.publishMessage("WORLDCHAT", messageString);
+    fetch(`http://127.0.0.1:8000/chat/?message=${message}`);
+
   }, []);
 
   useEffect(() => {

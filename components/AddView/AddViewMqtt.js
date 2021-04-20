@@ -5,8 +5,8 @@ import { connect } from "react-redux";
 import { Card, Title, Button } from "react-native-paper";
 import MapView from "react-native-maps";
 import { ScrollView, Image } from "react-native";
-import Icon from 'react-native-vector-icons/Feather';
-import DropDownPicker from 'react-native-dropdown-picker';
+import Icon from "react-native-vector-icons/Feather";
+import DropDownPicker from "react-native-dropdown-picker";
 
 const instructions = Platform.select({
   ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
@@ -23,9 +23,22 @@ const AddViewMqtt = ({ markers }) => {
   const isFirstRender = useRef(true);
 
   const actionList = [
-    { value: 0, label: "Traffipax", icon: () => <Icon name="map-pin" size={18} color="#900" />, hidden: true },
-    { value: 1, label: "Accident", icon: () => <Icon name="map-pin" size={18} color="#900" /> },
-    { value: 2, label: "Construction", icon: () => <Icon name="map-pin" size={18} color="#900" /> },
+    {
+      value: 0,
+      label: "Traffipax",
+      icon: () => <Icon name="map-pin" size={18} color="#900" />,
+      hidden: true,
+    },
+    {
+      value: 1,
+      label: "Accident",
+      icon: () => <Icon name="map-pin" size={18} color="#900" />,
+    },
+    {
+      value: 2,
+      label: "Construction",
+      icon: () => <Icon name="map-pin" size={18} color="#900" />,
+    },
   ];
 
   useEffect(() => {
@@ -71,7 +84,8 @@ const AddViewMqtt = ({ markers }) => {
         };
 
         let message = JSON.stringify(newMarker);
-        MqttService.publishMessage("WORLD", message);
+        //  MqttService.publishMessage("WORLD", message);
+        fetch(`http://127.0.0.1:8000/add/?message=${message}`);
       })
       .catch((e) => {
         console.log("Error in getAddressFromCoordinates", e);
@@ -88,15 +102,15 @@ const AddViewMqtt = ({ markers }) => {
             <Title>1. Choose the type</Title>
 
             <DropDownPicker
-                items={actionList}
-                defaultValue={0}
-                containerStyle={{height: 40}}
-                style={{backgroundColor: '#fafafa'}}
-                itemStyle={{
-                    justifyContent: 'flex-start'
-                }}
-                dropDownStyle={{backgroundColor: '#fafafa'}}
-                onChangeItem={item => setAction(item.value)}
+              items={actionList}
+              defaultValue={0}
+              containerStyle={{ height: 40 }}
+              style={{ backgroundColor: "#fafafa" }}
+              itemStyle={{
+                justifyContent: "flex-start",
+              }}
+              dropDownStyle={{ backgroundColor: "#fafafa" }}
+              onChangeItem={(item) => setAction(item.value)}
             />
             <Title>2. Choose the location</Title>
             <View>
@@ -189,7 +203,7 @@ const mapDispatchToProps = (dispatch) => {
           latitude: marker.latitude,
           longitude: marker.longitude,
           approveCount: marker.approveCount,
-          disApproveCount: marker.disApproveCount
+          disApproveCount: marker.disApproveCount,
         },
       }),
   };

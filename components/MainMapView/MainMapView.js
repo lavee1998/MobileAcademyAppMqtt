@@ -54,7 +54,9 @@ const MainMapView = ({ markers, addMarker }) => {
         isApproved: true,
       };
       let message = JSON.stringify(messageJSON);
-      MqttService.publishMessage("ApproveWORLD", message);
+      fetch(`http://127.0.0.1:8000/voting/?message=${message}`);
+
+      // MqttService.publishMessage("ApproveWORLD", message);
     }
   };
 
@@ -72,7 +74,9 @@ const MainMapView = ({ markers, addMarker }) => {
       };
 
       let message = JSON.stringify(messageJSON);
-      MqttService.publishMessage("ApproveWORLD", message);
+      // MqttService.publishMessage("ApproveWORLD", message);
+      fetch(`http://127.0.0.1:8000/voting/?message=${message}`);
+
     }
   };
 

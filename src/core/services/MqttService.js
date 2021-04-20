@@ -1,159 +1,131 @@
-import { Alert } from 'react-native';
+import { Alert } from "react-native";
 
-import init from '../libraries/mqtt';
+import init from "../libraries/mqtt";
 
 init();
 
 class MqttService {
+  static instance = null;
 
-static instance=null;
+  static getInstance() {
+    if (!MqttService.instance) {
+      MqttService.instance = new MqttService();
+    }
 
-static getInstance() {
+    return MqttService.instance;
+  }
 
-if (!MqttService.instance) {
+  constructor() {
+    const clientId = "SomeId";
 
-MqttService.instance=new MqttService();
+    this.client = new Paho.MQTT.Client("mab.inf.elte.hu",443, "/mqttservice", "User1");
+    //this.client.clientId = "User1";
+    //this.client.port = 443;
+    this.client.onMessageArrived = this.onMessageArrived;
 
-}
+    this.callbacks = {};
 
-return MqttService.instance;
+    this.onSuccessHandler = undefined;
 
-}
+    this.onConnectionLostHandler = undefined;
 
-constructor() {
+    this.isConnected = false;
+  }
 
-const clientId='SomeId';
+  connectClient = (onSuccessHandler, onConnectionLostHandler) => {
+    this.onSuccessHandler = onSuccessHandler;
 
-this.client = new Paho.MQTT.Client('mqtt.eclipse.org',80,clientId)
+    this.onConnectionLostHandler = onConnectionLostHandler;
 
-this.client.onMessageArrived=this.onMessageArrived;
+    this.client.onConnectionLost = () => {
+      this.isConnected = false;
 
-this.callbacks= {};
+      onConnectionLostHandler();
+    };
 
-this.onSuccessHandler=undefined;
+    this.client.connect({
+      timeout: 20,
+      userName: "User1",
+      password: "123",
+      useSSL: true,
 
-this.onConnectionLostHandler=undefined;
+      onSuccess: () => {
+        this.isConnected = true;
+        onSuccessHandler();
+      },
 
-this.isConnected=false;
+      // useSSL: false,
+      onFailure: this.onFailure,
+      reconnect: true,
+      keepAliveInterval: 20,
+      cleanSession: true,
+    });
+  };
 
-}
+  onFailure = ({ errorMessage }) => {
+    console.info(errorMessage);
 
-connectClient= (onSuccessHandler, onConnectionLostHandler) => {
+    this.isConnected = false;
 
-this.onSuccessHandler=onSuccessHandler;
+    Alert.alert(
+      "Could not connect to MQTT",
 
-this.onConnectionLostHandler=onConnectionLostHandler;
+      [
+        {
+          text: "TRY AGAIN",
+          onPress: () =>
+            this.connectClient(
+              this.onSuccessHandler,
+              this.onConnectionLostHandler
+            ),
+        },
+      ],
 
-this.client.onConnectionLost= () => {
+      {
+        cancelable: false,
+      }
+    );
+  };
 
-this.isConnected=false;
+  onMessageArrived = (message) => {
+    const { payloadString, topic } = message;
 
-onConnectionLostHandler();
+    this.callbacks[topic](payloadString);
+  };
 
-};
+  publishMessage = (topic, message) => {
+    if (!this.isConnected) {
+      console.info("not connected");
 
-this.client.connect({
+      return;
+    }
 
-timeout:10,
+    this.client.publish(topic, message);
+  };
 
-onSuccess: () => {
+  subscribe = (topic, callback) => {
+    if (!this.isConnected) {
+      console.info("not connected");
 
-this.isConnected=true;
+      return;
+    }
 
-onSuccessHandler();
+    this.callbacks[topic] = callback;
 
-},
+    this.client.subscribe(topic);
+  };
 
-useSSL:false,
+  unsubscribe = (topic) => {
+    if (!this.isConnected) {
+      console.info("not connected");
 
-onFailure:this.onFailure,
+      return;
+    }
 
-reconnect:true,
+    delete this.callbacks[topic];
 
-keepAliveInterval:20,
-
-cleanSession:true,
-
-});
-
-};
-
-onFailure= ({ errorMessage }) => {
-
-console.info(errorMessage);
-
-this.isConnected=false;
-
-Alert.alert(
-
-'Could not connect to MQTT',
-
-[{ text: 'TRY AGAIN', onPress: () => this.connectClient(this.onSuccessHandler, this.onConnectionLostHandler) }],
-
-{
-
-cancelable:false,
-
-},
-
-);
-
-};
-
-onMessageArrived=message=> {
-
-const { payloadString, topic } =message;
-
-this.callbacks[topic](payloadString);
-
-};
-
-publishMessage= (topic, message) => {
-
-if (!this.isConnected) {
-
-console.info('not connected');
-
-return;
-
-}
-
-this.client.publish(topic, message);
-
-};
-
-subscribe= (topic, callback) => {
-
-if (!this.isConnected) {
-
-console.info('not connected');
-
-return;
-
-}
-
-this.callbacks[topic] =callback;
-
-this.client.subscribe(topic);
-
-};
-
-unsubscribe=topic=> {
-
-if (!this.isConnected) {
-
-console.info('not connected');
-
-return;
-
-}
-
-delete this.callbacks[topic];
-
-this.client.unsubscribe(topic);
-
-};
-
+    this.client.unsubscribe(topic);
+  };
 }
 
 export default MqttService.getInstance();
