@@ -43,25 +43,26 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
 
   const mqttSuccessHandler = () => {
     console.info("connected to mqtt");
-    // MqttService.subscribe("WORLD", onWORLD);
-    // MqttService.subscribe("WORLDCHAT", onWORLDCHAT);
-    // MqttService.subscribe("ApproveWORLD", onApproveWORLD);
-
+    MqttService.subscribe('users/everyone/inbox/server/chat', onWORLDCHAT);
+    MqttService.subscribe('users/everyone/inbox/server/add', onWORLD);
+    MqttService.subscribe('users/everyone/inbox/server/vote', onApproveWORLD)
     setIsConnected(true);
   };
 
   const mqttConnectionLostHandler = () => {
-    console.log("nemá")
     setIsConnected(false);
   };
 
   const onWORLD = (messageFromWorld) => {
+    console.log(messageFromWorld, "nemá")
     let messageJSON = JSON.parse(messageFromWorld);
     addMarker(messageJSON);
     setMessage(messageFromWorld);
   };
 
   const onWORLDCHAT = (messageFromWorldChat) => {
+    console.log(messageFromWorldChat, "nemá")
+
     let messageJSON = JSON.parse(messageFromWorldChat);
 
     console.log("ONWORLDCHAT TEST");
@@ -74,6 +75,8 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
   };
 
   const onApproveWORLD = (messageFromWorld) => {
+    console.log(messageFromWorld)
+
     let messageJSON = JSON.parse(messageFromWorld);
     removeMarker(messageJSON);
     addMarker(messageJSON);
