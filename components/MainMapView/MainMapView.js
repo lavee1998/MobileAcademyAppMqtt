@@ -54,7 +54,7 @@ const MainMapView = ({ markers, addMarker }) => {
         isApproved: true,
       };
       let message = JSON.stringify(messageJSON);
-      fetch(`http://127.0.0.1:8000/voting/?message=${message}`);
+      fetch(`https://mabmqttproxy.herokuapp.com/vote/?message=${message}`);
 
       // MqttService.publishMessage("ApproveWORLD", message);
     }
@@ -75,7 +75,7 @@ const MainMapView = ({ markers, addMarker }) => {
 
       let message = JSON.stringify(messageJSON);
       // MqttService.publishMessage("ApproveWORLD", message);
-      fetch(`http://127.0.0.1:8000/vote/?message=${message}`);
+      fetch(`https://mabmqttproxy.herokuapp.com/vote/?message=${message}`);
 
     }
   };

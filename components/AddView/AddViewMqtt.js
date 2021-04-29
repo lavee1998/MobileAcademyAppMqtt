@@ -85,7 +85,7 @@ const AddViewMqtt = ({ markers }) => {
 
         let message = JSON.stringify(newMarker);
         //  MqttService.publishMessage("WORLD", message);
-        fetch(`http://127.0.0.1:8000/add/?message=${message}`);
+        fetch(`https://mabmqttproxy.herokuapp.com/add/?message=${message}`);
       })
       .catch((e) => {
         console.log("Error in getAddressFromCoordinates", e);
