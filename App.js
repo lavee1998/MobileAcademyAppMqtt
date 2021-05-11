@@ -1,34 +1,19 @@
-import { StatusBar } from 'expo-status-bar'
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import {
-  Provider as PaperProvider,
-  Appbar,
-  DefaultTheme,
-  BottomNavigation,
-} from 'react-native-paper'
-import reducer from './reducer'
-import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import AppMqtt from './AppMqtt'
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+import AppProvider from "./AppProvider";
+import Login from "./components/LoginView";
+import { NavigationContainer } from "@react-navigation/native";
+import { Button, View, Text } from "react-native";
 
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'darkcyan',
-    accent: 'white',
-  },
-}
+const Stack = createStackNavigator();
 
-const store = createStore(reducer)
-
-export default App = () => {
+export default function App() {
   return (
-    <Provider store={store}>
-      <PaperProvider theme={theme}>
-        <AppMqtt/>
-      </PaperProvider>
-    </Provider>
-  )
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="App" component={AppProvider} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }

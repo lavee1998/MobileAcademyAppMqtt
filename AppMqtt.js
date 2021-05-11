@@ -24,7 +24,7 @@ const Map = () => <MainMapView />;
 const Add = () => <AddView />;
 const Chat = () => <ChatView />;
 
-const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
+const AppMqtt = ({ addMarker, addMessage, removeMarker , username, password}) => {
   const _goBack = () => console.log("Went back");
   const [isConnected, setIsConnected] = React.useState(false);
   let client;
@@ -37,8 +37,8 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
   ]);
 
   useEffect(() => {
+    console.log(username,password)
     MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler);
-    //client = mqtt.connect('wss://mab.inf.elte.hu/mqttservice')
   }, []);
 
   const mqttSuccessHandler = () => {
@@ -50,6 +50,7 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker }) => {
   };
 
   const mqttConnectionLostHandler = () => {
+    console.info("failed to connect")
     setIsConnected(false);
   };
 
