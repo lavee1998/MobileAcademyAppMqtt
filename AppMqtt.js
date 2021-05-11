@@ -25,6 +25,7 @@ const Add = () => <AddView />;
 const Chat = () => <ChatView />;
 
 const AppMqtt = ({ addMarker, addMessage, removeMarker , username, password}) => {
+  console.log(username,password)
   const _goBack = () => console.log("Went back");
   const [isConnected, setIsConnected] = React.useState(false);
   let client;
@@ -38,7 +39,7 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker , username, password}) =>
 
   useEffect(() => {
     console.log(username,password)
-    MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler);
+    MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler, username, password);
   }, []);
 
   const mqttSuccessHandler = () => {

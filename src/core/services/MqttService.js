@@ -18,7 +18,12 @@ class MqttService {
   constructor() {
     const clientId = "SomeId";
 
-    this.client = new Paho.MQTT.Client("mab.inf.elte.hu",443, "/mqttservice", "User1");
+    this.client = new Paho.MQTT.Client(
+      "mab.inf.elte.hu",
+      443,
+      "/mqttservice",
+      "User1"
+    );
     //this.client.clientId = "User1";
     //this.client.port = 443;
     this.client.onMessageArrived = this.onMessageArrived;
@@ -32,7 +37,12 @@ class MqttService {
     this.isConnected = false;
   }
 
-  connectClient = (onSuccessHandler, onConnectionLostHandler) => {
+  connectClient = (
+    onSuccessHandler,
+    onConnectionLostHandler,
+    userName,
+    password
+  ) => {
     this.onSuccessHandler = onSuccessHandler;
 
     this.onConnectionLostHandler = onConnectionLostHandler;
@@ -43,18 +53,21 @@ class MqttService {
       onConnectionLostHandler();
     };
 
+    if(this.isConnected) {
+      console.log(this.isConnected)
+      this.client.disconnect()
+    }
+
     this.client.connect({
       timeout: 20,
-      userName: "tm_user2",
-      password: "123",
+      userName: userName, //"tm_user2",
+      password: password, //"123",
       useSSL: true,
 
       onSuccess: () => {
         this.isConnected = true;
         onSuccessHandler();
       },
-
-      // useSSL: false,
       onFailure: this.onFailure,
       reconnect: true,
       keepAliveInterval: 20,

@@ -7,8 +7,8 @@ import DropDown from "react-native-paper-dropdown";
 import { ScrollView, Image } from "react-native";
 
 const LoginView = ({ navigation }) => {
-  const [text, onChangeText] = React.useState("");
-  const [number, onChangeNumber] = React.useState("");
+  const [username, onChangeUsername] = React.useState("");
+  const [password, onChangePassword] = React.useState("");
 
   console.log(navigation);
   return (
@@ -18,21 +18,22 @@ const LoginView = ({ navigation }) => {
       <Title>Login with your account</Title>
       <TextInput
         style={{ margin: "auto", width: "90%" }}
-        onChangeText={onChangeText}
+        onChangeText={onChangeUsername}
         placeholder="UserName"
-        value={text}
+        value={username}
       />
       <TextInput
+      secureTextEntry={true}
         style={{ margin: "auto", width: "90%" }}
-        onChangeText={onChangeNumber}
-        value={number}
+        onChangeText={onChangePassword}
+        value={password}
         placeholder="Password"
       />
       <Button
         icon="login"
         mode="contained"
         style={{ margin: 8, width: "90%" }}
-        onPress={() => navigation.navigate("App")}
+        onPress={() => navigation.navigate("App", { username: username, password: password })}
       >
         Login
       </Button>
