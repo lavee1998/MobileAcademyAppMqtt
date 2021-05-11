@@ -45,7 +45,7 @@ class MqttService {
 
     this.client.connect({
       timeout: 20,
-      userName: "User1",
+      userName: "tm_user2",
       password: "123",
       useSSL: true,
 
