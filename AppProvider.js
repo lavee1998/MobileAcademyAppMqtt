@@ -24,7 +24,6 @@ const theme = {
 const store = createStore(reducer);
 
 export default AppProvider = ({ navigation, route }) => {
-  console.log(route, route.params, "appprovider");
   return (
     <Provider store={store}>
       <PaperProvider theme={theme}>

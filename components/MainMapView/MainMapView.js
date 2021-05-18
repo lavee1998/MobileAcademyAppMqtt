@@ -10,36 +10,36 @@ import {
 import MapView, { AnimatedRegion, Marker } from "react-native-maps";
 import { connect } from "react-redux";
 import { List, IconButton, Colors } from "react-native-paper";
+import * as Location from "expo-location";
 import MqttService from "../../src/core/services/MqttService";
 
 const MainMapView = ({ markers, addMarker }) => {
-  const [currentRegion, setCurrentRegion] = React.useState(null);
+  const [currentRegion, setCurrentRegion] = React.useState();
+  const LOCATION_SETTINGS = {
+    accuracy:Location.Accuracy.High,
+    distanceInterval: 0,
+  };
 
   useEffect(() => {
-    getCurrentLocation().then((position) => {
-      if (position) {
-        setCurrentRegion({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          latitudeDelta: 0.0001,
-          longitudeDelta: 0.0001,
-        });
+    (async () => {
+      let { status } = await Location.requestPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
       }
-    });
-  }, []);
 
-  useEffect(() => {
+      watchPositionStatus.current = await Location.watchPositionAsync(
+        LOCATION_SETTINGS,
+        updatePosition
+      );
+    })();
     console.log("Markers changed.");
   }, [markers]);
 
-  const getCurrentLocation = () => {
-    return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => resolve(position),
-        (e) => reject(e)
-      );
-    });
-  };
+  const updatePosition = (currLocation) => {
+    setCurrentRegion(currLocation.coords);
+  }
+
 
   const approve = (eventMarker) => {
 
@@ -55,7 +55,6 @@ const MainMapView = ({ markers, addMarker }) => {
       };
       let message = JSON.stringify(messageJSON);
       fetch(`https://mabmqttproxy.herokuapp.com/vote/?message=${message}`);
-      // MqttService.publishMessage("ApproveWORLD", message);
     }
   };
 
@@ -73,7 +72,6 @@ const MainMapView = ({ markers, addMarker }) => {
       };
 
       let message = JSON.stringify(messageJSON);
-      // MqttService.publishMessage("ApproveWORLD", message);
       fetch(`https://mabmqttproxy.herokuapp.com/vote/?message=${message}`);
     }
   };
@@ -129,11 +127,10 @@ const MainMapView = ({ markers, addMarker }) => {
           </List.Section>
         </ScrollView>
       </View>
-      <MapView
+      {!currentRegion && <MapView
         style={styles.map}
         loadingEnabled={true}
         zoomEnabled={true}
-        defaultRegion={currentRegion}
       >
         {markers.map((marker, i) => {
           var markerSource = "";
@@ -156,7 +153,41 @@ const MainMapView = ({ markers, addMarker }) => {
             </MapView.Marker>
           );
         })}
-      </MapView>
+      </MapView>}
+      {currentRegion && <MapView
+        style={styles.map}
+        loadingEnabled={true}
+        zoomEnabled={true}
+        showsUserLocation={true}
+        initialRegion={{
+          latitude: currentRegion.latitude,
+          longitude: currentRegion.longitude,
+          latitudeDelta: 0.006,
+          longitudeDelta: 0.006,
+        }}
+      >
+        {markers.map((marker, i) => {
+          var markerSource = "";
+          switch (marker.type) {
+            case 0:
+              markerSource = require("../../images/tc_logo.png");
+              break;
+            case 1:
+              markerSource = require("../../images/traffic_accident.png");
+              break;
+            case 2:
+              markerSource = require("../../images/construction_logo.png");
+              break;
+            default:
+              markerSource = require("../../images/tc_logo.png");
+          }
+          return (
+            <MapView.Marker key={i} coordinate={marker} title={marker.createdAt.toLocaleString('en-GB', { timeZone: 'UTC' })}>
+              <Image source={markerSource} style={{ height: 50, width: 55 }} />
+            </MapView.Marker>
+          );
+        })}
+      </MapView>}
     </View>
   );
 };
