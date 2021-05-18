@@ -65,7 +65,6 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker , username, password}) =>
   };
 
   const onApproveWORLD = (messageFromWorld) => {
-    console.log(messageFromWorld);
     let messageJSON = JSON.parse(messageFromWorld);
     removeMarker(messageJSON);
     addMarker(messageJSON);
