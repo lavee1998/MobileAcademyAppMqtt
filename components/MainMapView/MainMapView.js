@@ -107,14 +107,14 @@ const MainMapView = ({ markers, addMarker }) => {
                       <IconButton
                         icon="thumb-up"
                         color={Colors.greenA400}
-                        disabled={marker.isApproved}
+                        // disabled={marker.isApproved}
                         size={20}
                         onPress={() => approve(marker)}
                       />
                       <IconButton
                         icon="thumb-down"
                         color={Colors.redA200}
-                        disabled={marker.isApproved}
+                        // disabled={marker.isApproved}
                         size={20}
                         onPress={() => disApprove(marker)}
                       />

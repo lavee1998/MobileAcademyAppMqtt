@@ -44,26 +44,26 @@ const initialState = {
     },
   ],
   messages: [
-    {
-      _id: 1,
-      text: "Hello User",
-      createdAt: new Date(),
-      user: {
-        _id: 3,
-        name: "React Native",
-        avatar: "https://placeimg.com/140/140/any",
-      },
-    },
-    {
-      _id: 2,
-      text: "Hello another user",
-      createdAt: new Date(),
-      user: {
-        _id: 2,
-        name: "React Native",
-        avatar: "https://placeimg.com/140/140/any",
-      },
-    },
+    // {
+    //   _id: 1,
+    //   text: "Hello User",
+    //   createdAt: new Date(),
+    //   user: {
+    //     _id: 3,
+    //     name: "React Native",
+    //     avatar: "https://placeimg.com/140/140/any",
+    //   },
+    // },
+    // {
+    //   _id: 2,
+    //   text: "Hello another user",
+    //   createdAt: new Date(),
+    //   user: {
+    //     _id: 2,
+    //     name: "React Native",
+    //     avatar: "https://placeimg.com/140/140/any",
+    //   },
+    // },
   ],
 };
 
