@@ -31,10 +31,7 @@ const ChatView = ({ messages }) => {
   }
 
   const onSend = useCallback((messageJSON = []) => {
-    console.log("MESSAGE JSON: ")
-    console.log(messageJSON)
-    let messageString = JSON.stringify(messageJSON);
-    console.log(messageString)
+    let message = JSON.stringify(messageJSON);
     // MqttService.publishMessage("WORLDCHAT", messageString);
     fetch(`https://mabmqttproxy.herokuapp.com/chat/?message=${message}`);
 

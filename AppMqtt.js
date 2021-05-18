@@ -25,10 +25,8 @@ const Add = () => <AddView />;
 const Chat = () => <ChatView />;
 
 const AppMqtt = ({ addMarker, addMessage, removeMarker , username, password}) => {
-  console.log(username,password)
   const _goBack = () => console.log("Went back");
   const [isConnected, setIsConnected] = React.useState(false);
-  let client;
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
@@ -38,8 +36,9 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker , username, password}) =>
   ]);
 
   useEffect(() => {
-    console.log(username,password)
-    MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler, username, password);
+    if(!isConnected) {
+      MqttService.connectClient(mqttSuccessHandler, mqttConnectionLostHandler, username, password);
+    }
   }, []);
 
   const mqttSuccessHandler = () => {
@@ -56,36 +55,22 @@ const AppMqtt = ({ addMarker, addMessage, removeMarker , username, password}) =>
   };
 
   const onWORLD = (messageFromWorld) => {
-    console.log(messageFromWorld, "nemá")
     let messageJSON = JSON.parse(messageFromWorld);
     addMarker(messageJSON);
-    setMessage(messageFromWorld);
   };
 
   const onWORLDCHAT = (messageFromWorldChat) => {
-    console.log(messageFromWorldChat, "nemá")
-
     let messageJSON = JSON.parse(messageFromWorldChat);
-
-    console.log("ONWORLDCHAT TEST");
-    console.log(messageJSON);
     addMessage(messageJSON);
-
-    /* setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messageJSON)
-    );*/
   };
 
   const onApproveWORLD = (messageFromWorld) => {
-    console.log(messageFromWorld)
-
+    console.log(messageFromWorld);
     let messageJSON = JSON.parse(messageFromWorld);
     removeMarker(messageJSON);
     addMarker(messageJSON);
   };
-
   
-
   const renderScene = BottomNavigation.SceneMap({
     add: Add,
     map: Map,

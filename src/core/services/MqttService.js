@@ -24,8 +24,7 @@ class MqttService {
       "/mqttservice",
       "User1"
     );
-    //this.client.clientId = "User1";
-    //this.client.port = 443;
+
     this.client.onMessageArrived = this.onMessageArrived;
 
     this.callbacks = {};
@@ -54,12 +53,11 @@ class MqttService {
     };
 
     if(this.isConnected) {
-      console.log(this.isConnected)
       this.client.disconnect()
     }
 
     this.client.connect({
-      timeout: 20,
+      //timeout: 20,
       userName: userName, //"tm_user2",
       password: password, //"123",
       useSSL: true,

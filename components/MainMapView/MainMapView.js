@@ -55,7 +55,6 @@ const MainMapView = ({ markers, addMarker }) => {
       };
       let message = JSON.stringify(messageJSON);
       fetch(`https://mabmqttproxy.herokuapp.com/vote/?message=${message}`);
-
       // MqttService.publishMessage("ApproveWORLD", message);
     }
   };
@@ -76,7 +75,6 @@ const MainMapView = ({ markers, addMarker }) => {
       let message = JSON.stringify(messageJSON);
       // MqttService.publishMessage("ApproveWORLD", message);
       fetch(`https://mabmqttproxy.herokuapp.com/vote/?message=${message}`);
-
     }
   };
 
