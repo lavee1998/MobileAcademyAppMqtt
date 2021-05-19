@@ -22,7 +22,7 @@ class MqttService {
       "mab.inf.elte.hu",
       443,
       "/mqttservice",
-      "tm_user1"
+      "User1"
     );
 
     this.client.onMessageArrived = this.onMessageArrived;
