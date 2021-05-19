@@ -42,38 +42,32 @@ const MainMapView = ({ markers, addMarker }) => {
 
 
   const approve = (eventMarker) => {
-
-    if (eventMarker.isApproved === false) {
-      let messageJSON = {
-        address: eventMarker.address,
-        latitude: eventMarker.latitude,
-        longitude: eventMarker.longitude,
-        type: eventMarker.type,
-        approveCount: eventMarker.approveCount + 1,
-        disApproveCount: eventMarker.disApproveCount,
-        isApproved: true,
-      };
-      let message = JSON.stringify(messageJSON);
-      fetch(`https://mabmqttproxy.herokuapp.com/vote/?message=${message}`);
-    }
+    let messageJSON = {
+      address: eventMarker.address,
+      latitude: eventMarker.latitude,
+      longitude: eventMarker.longitude,
+      type: eventMarker.type,
+      approveCount: eventMarker.approveCount + 1,
+      disApproveCount: eventMarker.disApproveCount,
+      isApproved: true,
+    };
+    let message = JSON.stringify(messageJSON);
+    fetch(`https://mabmqttproxy.herokuapp.com/vote/?message=${message}`);
   };
 
   const disApprove = (eventMarker) => {
+    let messageJSON = {
+      address: eventMarker.address,
+      latitude: eventMarker.latitude,
+      longitude: eventMarker.longitude,
+      type: eventMarker.type,
+      approveCount: eventMarker.approveCount,
+      disApproveCount: eventMarker.disApproveCount + 1,
+      isApproved: true,
+    };
 
-    if (eventMarker.isApproved === false) {
-      let messageJSON = {
-        address: eventMarker.address,
-        latitude: eventMarker.latitude,
-        longitude: eventMarker.longitude,
-        type: eventMarker.type,
-        approveCount: eventMarker.approveCount,
-        disApproveCount: eventMarker.disApproveCount + 1,
-        isApproved: true,
-      };
-
-      let message = JSON.stringify(messageJSON);
-      fetch(`https://mabmqttproxy.herokuapp.com/vote/?message=${message}`);
-    }
+    let message = JSON.stringify(messageJSON);
+    fetch(`https://mabmqttproxy.herokuapp.com/vote/?message=${message}`);
   };
 
   return (
